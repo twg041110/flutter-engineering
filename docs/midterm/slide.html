@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>후회 지출 가계부 장표</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFFFF; --text: #191B1F; --sub: #6B7076; --line: #EEF0F2; --box: #F5F6F7;
+    --blue: #1E6FD9; --red-bar: #D93025; --red: #C5221F; --orange-bar: #E8710A; --orange: #B45309;
+    --purple: #6E4BB8; --purple-text: #5A3A9E; --fixed: #A9AEB4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1600px; height: 900px; background: #EDF1F6; font-family: 'Noto Sans KR', sans-serif; color: var(--text); overflow: hidden; }
+  .head { padding: 34px 64px 0; display: flex; align-items: baseline; gap: 20px; }
+  .head h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
+  .head p { font-size: 21px; color: var(--sub); }
+  .head p b { color: var(--blue); }
+  .row { display: flex; justify-content: center; gap: 70px; margin-top: 22px; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .cap { margin-top: 14px; font-size: 19px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .cap .n { width: 26px; height: 26px; border-radius: 50%; background: var(--text); color: #fff; font-size: 14px; display: grid; place-items: center; }
+  .cap .key { background: var(--blue); color: #fff; font-size: 13px; padding: 3px 9px; border-radius: 20px; }
+
+  /* 폰 프레임: 360dp 화면을 0.83배로 축소 */
+  .phone { zoom: 0.83; width: 380px; height: 850px; background: #1C1D20; border-radius: 52px; padding: 10px; box-shadow: 0 24px 50px rgba(20,30,50,.22); }
+  .screen { position: relative; width: 360px; height: 830px; background: var(--bg); border-radius: 43px; overflow: hidden; }
+  .status { height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-size: 14px; font-weight: 700; }
+  .status::after { content: ''; position: absolute; left: 50%; top: 13px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #1C1D20; }
+  .status .ic { display: flex; gap: 5px; align-items: center; }
+  .pad { padding: 0 20px; }
+  .muted { color: var(--sub); }
+  .small { font-size: 13px; }
+
+  /* 홈 */
+  .title-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 20px 6px; }
+  .title-row h2 { font-size: 24px; font-weight: 800; }
+  .money { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; margin: 2px 0 4px; }
+  .alerts { background: var(--box); border-radius: 12px; padding: 12px 14px; margin: 16px 20px 0; display: flex; flex-direction: column; gap: 9px; }
+  .alert { display: flex; gap: 9px; font-size: 13.5px; line-height: 1.45; font-weight: 500; }
+  .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; }
+  .section { font-size: 17px; font-weight: 800; padding: 20px 20px 4px; }
+  .budget { padding: 11px 20px 10px; border-bottom: 1px solid var(--line); }
+  .budget .top { display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; }
+  .budget .top span:last-child { font-size: 14px; color: var(--sub); }
+  .budget .top b { color: var(--text); }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; margin: 8px 0 6px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 2px; }
+  .budget .note { font-size: 12.5px; color: var(--sub); }
+  .tabbar { position: absolute; bottom: 0; left: 0; right: 0; height: 74px; background: #fff; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding-top: 9px; }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; color: var(--sub); font-weight: 500; }
+  .tab.on { color: var(--blue); }
+  .fab { position: absolute; right: 20px; bottom: 92px; width: 56px; height: 56px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; box-shadow: 0 6px 14px rgba(30,111,217,.35); }
+
+  /* 입력 */
+  .appbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px 6px; font-size: 18px; font-weight: 700; }
+  .seg { display: flex; background: var(--box); border-radius: 10px; padding: 4px; margin: 10px 20px 0; }
+  .seg div { flex: 1; text-align: center; padding: 9px 0; font-size: 15px; font-weight: 700; color: var(--sub); border-radius: 8px; }
+  .seg .on { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .field { padding: 18px 20px 0; }
+  .label { font-size: 13px; color: var(--sub); margin-bottom: 7px; font-weight: 500; }
+  .amount { font-size: 30px; font-weight: 800; padding-bottom: 8px; border-bottom: 2px solid var(--blue); }
+  .input { font-size: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 14px; padding: 9px 13px; border: 1px solid #DADDE1; border-radius: 20px; font-weight: 500; }
+  .chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .chip small { font-size: 11px; color: var(--sub); margin-left: 3px; }
+  .save { position: absolute; left: 20px; right: 20px; bottom: 34px; height: 54px; border-radius: 12px; background: var(--blue); color: #fff; font-size: 17px; font-weight: 700; display: grid; place-items: center; }
+
+  /* 내역 */
+  .regret-box { background: var(--box); border-radius: 12px; padding: 14px 16px; margin: 12px 20px 4px; }
+  .regret-box .big { font-size: 19px; font-weight: 800; margin-top: 2px; }
+  .regret-box .big span { color: var(--purple-text); }
+  .regret-box .pct { display: inline-block; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--purple-text); background: #EEE9F8; padding: 2px 9px; border-radius: 10px; }
+  .day { font-size: 13px; color: var(--sub); font-weight: 700; padding: 16px 20px 4px; }
+  .item { display: flex; align-items: center; padding: 9px 20px; gap: 10px; }
+  .item .txt { flex: 1; }
+  .item .txt div:first-child { font-size: 15px; font-weight: 500; }
+  .item .txt div:last-child { font-size: 12.5px; color: var(--sub); margin-top: 1px; }
+  .item .amt { font-size: 15px; font-weight: 700; }
+  .rg { width: 52px; height: 32px; border-radius: 16px; font-size: 13px; font-weight: 700; display: grid; place-items: center; border: 1px solid #C9CDD2; color: var(--sub); background: #fff; }
+  .rg.on { background: var(--purple); border-color: var(--purple); color: #fff; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>후회 지출 가계부</h1>
+    <p>지금 쓰는 속도로 월말을 예측해 <b>한도를 넘기 전에</b> 알려 주는 가계부</p>
+  </div>
+
+  <div class="row">
+    <!-- 1. 홈 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="ic">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#191B1F"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="#191B1F"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="#191B1F"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="#191B1F"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="#191B1F"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="#191B1F"/><rect x="23" y="4" width="1.6" height="4" rx=".8" fill="#191B1F"/></svg>
+        </span></div>
+        <div class="title-row"><h2>11월</h2><span class="small muted">11월 7일 – 12월 6일</span></div>
+        <div class="pad">
+          <div class="small muted" style="margin-top:6px">이번 달 남은 돈</div>
+          <div class="money">508,000원</div>
+          <div class="small muted">수입 1,200,000원 · 지출 692,000원</div>
+        </div>
+        <div class="alerts">
+          <div class="alert"><span class="dot" style="background:var(--red-bar)"></span><span>식비가 월말에 150,000원 넘을 것 같아요</span></div>
+          <div class="alert"><span class="dot" style="background:var(--orange-bar)"></span><span>카페·간식이 한도에 가까워지고 있어요 <span style="white-space:nowrap">(56,000원 남음)</span></span></div>
+          <div class="alert"><span class="dot" style="background:var(--orange-bar)"></span><span>교통이 한도에 가까워지고 있어요 <span style="white-space:nowrap">(42,000원 남음)</span></span></div>
+        </div>
+        <div class="section">예산</div>
+        <div class="budget">
+          <div class="top"><span>식비</span><span><b>150,000</b> / 300,000원</span></div>
+          <div class="bar"><i style="width:50%;background:var(--red-bar)"></i></div>
+          <div class="note" style="color:var(--red);font-weight:700">이대로면 450,000원</div>
+        </div>
+        <div class="budget">
+          <div class="top"><span>카페·간식</span><span><b>24,000</b> / 80,000원</span></div>
+          <div class="bar"><i style="width:30%;background:var(--orange-bar)"></i></div>
+          <div class="note">이대로면 72,000원</div>
+        </div>
+        <div class="budget">
+          <div class="top"><span>교통</span><span><b>18,000</b> / 60,000원</span></div>
+          <div class="bar"><i style="width:30%;background:var(--orange-bar)"></i></div>
+          <div class="note">이대로면 54,000원</div>
+        </div>
+        <div class="budget" style="border:none">
+          <div class="top"><span>월세</span><span><b>500,000</b> / 500,000원</span></div>
+          <div class="bar"><i style="width:100%;background:var(--fixed)"></i></div>
+          <div class="note">고정</div>
+        </div>
+        <div class="fab"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+        <div class="tabbar">
+          <div class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="#1E6FD9"/></svg>홈</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9" stroke="#6B7076" stroke-width="2" stroke-linecap="round"/></svg>내역</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="#6B7076" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="#6B7076" stroke-width="2" stroke-linecap="round"/></svg>설정</div>
+        </div>
+      </div></div>
+      <div class="cap"><span class="n">1</span>홈: 한도를 넘기 전에 미리 알림 <span class="key">핵심 가치</span></div>
+    </div>
+
+    <!-- 2. 입력 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="ic">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#191B1F"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="#191B1F"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="#191B1F"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="#191B1F"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="#191B1F"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="#191B1F"/><rect x="23" y="4" width="1.6" height="4" rx=".8" fill="#191B1F"/></svg>
+        </span></div>
+        <div class="appbar"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#191B1F" stroke-width="2" stroke-linecap="round"/></svg>기록 추가</div>
+        <div class="seg"><div class="on">지출</div><div>수입</div></div>
+        <div class="field"><div class="label">금액</div><div class="amount">28,000원</div></div>
+        <div class="field"><div class="label">날짜</div><div class="input"><span>11월 16일 (오늘)</span><svg width="18" height="18" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="#6B7076" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="#6B7076" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+        <div class="field"><div class="label">카테고리</div>
+          <div class="chips">
+            <span class="chip on">식비</span><span class="chip">카페·간식</span><span class="chip">교통</span>
+            <span class="chip">쇼핑</span><span class="chip">취미</span><span class="chip">기타</span>
+            <span class="chip">월세<small>고정</small></span><span class="chip">통신<small>고정</small></span><span class="chip">구독<small>고정</small></span>
+          </div>
+        </div>
+        <div class="field"><div class="label">내용 (선택)</div><div class="input"><span>배달 치킨</span></div></div>
+        <div class="save">저장</div>
+      </div></div>
+      <div class="cap"><span class="n">2</span>입력: 금액·카테고리만 빠르게 기록</div>
+    </div>
+
+    <!-- 3. 내역 -->
+    <div class="col">
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="ic">
+          <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#191B1F"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="#191B1F"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="#191B1F"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="#191B1F"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="#191B1F"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="#191B1F"/><rect x="23" y="4" width="1.6" height="4" rx=".8" fill="#191B1F"/></svg>
+        </span></div>
+        <div class="title-row"><h2>내역</h2><span class="small muted">11월 7일 – 12월 6일</span></div>
+        <div class="regret-box">
+          <div class="small muted">이번 달 후회한 지출</div>
+          <div class="big"><span>45,000원</span></div>
+          <div class="pct">변동비의 23%</div>
+        </div>
+        <div class="day">오늘</div>
+        <div class="item"><div class="txt"><div>배달 치킨</div><div>식비</div></div><div class="amt">-28,000원</div><div class="rg on">후회</div></div>
+        <div class="item"><div class="txt"><div>버스</div><div>교통</div></div><div class="amt">-1,500원</div><div class="rg">후회</div></div>
+        <div class="day">어제 · 11월 15일</div>
+        <div class="item"><div class="txt"><div>편의점 야식</div><div>식비</div></div><div class="amt">-17,000원</div><div class="rg on">후회</div></div>
+        <div class="item"><div class="txt"><div>아메리카노</div><div>카페·간식</div></div><div class="amt">-4,500원</div><div class="rg">후회</div></div>
+        <div class="day">11월 14일</div>
+        <div class="item"><div class="txt"><div>학식</div><div>식비</div></div><div class="amt">-6,000원</div><div class="rg">후회</div></div>
+        <div class="item"><div class="txt"><div>지하철</div><div>교통</div></div><div class="amt">-1,500원</div><div class="rg">후회</div></div>
+        <div class="fab"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 3v16M3 11h16" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+        <div class="tabbar">
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="#6B7076"/></svg>홈</div>
+          <div class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9" stroke="#1E6FD9" stroke-width="2" stroke-linecap="round"/></svg>내역</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="#6B7076" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="#6B7076" stroke-width="2" stroke-linecap="round"/></svg>설정</div>
+        </div>
+      </div></div>
+      <div class="cap"><span class="n">3</span>내역: 아까웠던 지출에 ‘후회’ 표시</div>
+    </div>
+  </div>
+</body>
+</html>
