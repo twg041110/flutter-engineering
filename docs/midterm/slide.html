@@ -73,6 +73,7 @@
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { font-size: 14px; padding: 9px 13px; border: 1px solid #DADDE1; border-radius: 20px; font-weight: 500; }
   .chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .chip.add { border-style: dashed; color: var(--blue); border-color: var(--blue); font-weight: 700; padding: 9px 15px; }
   .chip small { font-size: 11px; color: var(--sub); margin-left: 3px; }
   .save { position: absolute; left: 20px; right: 20px; bottom: 34px; height: 54px; border-radius: 12px; background: var(--blue); color: #fff; font-size: 17px; font-weight: 700; display: grid; place-items: center; }
 
@@ -186,7 +187,7 @@
           <div class="chips">
             <span class="chip on">식비</span><span class="chip">카페·간식</span><span class="chip">교통</span>
             <span class="chip">쇼핑</span><span class="chip">취미</span><span class="chip">기타</span>
-            <span class="chip">월세<small>고정</small></span><span class="chip">통신<small>고정</small></span><span class="chip">구독<small>고정</small></span>
+            <span class="chip">월세<small>고정</small></span><span class="chip">통신<small>고정</small></span><span class="chip">구독<small>고정</small></span><span class="chip add">+</span>
           </div>
         </div>
         <div class="field"><div class="label">내용 (선택)</div><div class="input"><span>배달 치킨</span></div></div>
